@@ -1,0 +1,10 @@
+---
+- name: Install a package on a VM
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Install the package
+      package:
+        name: fish
+        state: installed
+      become: true
