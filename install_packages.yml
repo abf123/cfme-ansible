@@ -5,7 +5,7 @@
     packages: from_playbook
   tasks:
   - name: Install packages
-    packages:
-      name: "{{ package|split('\n') }}"
+    package:
+      name: "{{ packages.split('\n') }}"
       state: present
     become: true
