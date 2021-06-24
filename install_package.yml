@@ -1,11 +1,11 @@
 ---
-- name: Install packages on a VM
+- name: Install a package on a VM
   hosts: all
   vars:
-    packages: from_playbook
+    package: from_playbook
   tasks:
-  - name: Install packages
-    packages:
-      name: "{{ package|split('\n') }}"
-      state: present
+  - name: Install the package
+    package:
+      name: "{{ package }}"
+      state: installed
     become: true
