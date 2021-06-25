@@ -11,3 +11,11 @@
       groups: "{{ user_groups|default(omit) }}"
       shell: "{{ user_shell|default(omit) }}"
     become: true
+  - name: Add pubkey to user
+    authorized_key:
+      user: "{{ user_name }}"
+      state: present
+      key: "{{ user_pubkey }}"
+    become: true
+    when:
+      - user_pubkey is defined
