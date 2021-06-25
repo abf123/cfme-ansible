@@ -1,0 +1,10 @@
+---
+- name: Add Public Key as Authorized Key to a User on a VM
+  hosts: all
+  tasks:
+  - name: Add pubkey
+    authorized_key:
+      user: "{{ authkey_user }}"
+      state: present
+      key: "{{ authkey_key }}"
+    become: true

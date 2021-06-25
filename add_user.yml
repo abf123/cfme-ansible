@@ -1,0 +1,13 @@
+---
+- name: Add Users to a VM
+  hosts: all
+  tasks:
+  - name: Add user
+    user:
+      name: "{{ user_name }}"
+      state: present
+      comment: "{{ user_comment|default(omit) }}"
+      append: "{{ user_append|default(omit) }}"
+      groups: "{{ user_groups|default(omit) }}"
+      shell: "{{ user_shell|default(omit) }}"
+    become: true
