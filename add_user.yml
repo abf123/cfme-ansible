@@ -1,6 +1,10 @@
 ---
 - name: Add Users to a VM
   hosts: all
+
+  roles:
+  - role: whoami
+
   tasks:
   - name: Add user
     user:
