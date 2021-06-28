@@ -1,0 +1,30 @@
+---
+- name: Deploy an OpenStack Server
+  hosts: localhost
+  vars:
+    instance_name: testing_os_server
+    instance_image: Oracle Linux 8 EPEL
+    instance_key: icds-key
+    instance_flavor: m5.2xlarge
+    instance_network: icds-tenant-net
+    os_timeout: 200
+  vars_files:
+    - cloud.yml
+
+  tasks:
+  - debug:
+      var: os_cloud
+  - name: Authenticate to the cloud
+    os_auth:
+      cloud: "{{ os_cloud }}"
+  - name: Deploy server
+    os_server:
+      name: "{{ instance_name }}"
+      state: present
+      cloud: "{{ os_cloud }}"
+      image: "{{ instance_image }}"
+      key_name: "{{ instance_key }}"
+      timeout: "{{ os_timeout }}"
+      flavor: "{{ instance_flavor }}"
+      nics:
+        - net-name: "{{ instance_network }}"
