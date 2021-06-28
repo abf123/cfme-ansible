@@ -1,0 +1,9 @@
+---
+# tasks file for whoami
+- name: Get my identity
+  command: whoami
+  register: whoami
+
+- name: Who am I?
+  debug:
+    var: whoami.stdout
