@@ -8,6 +8,7 @@
     instance_flavor: m5.2xlarge
     instance_network: icds-tenant-net
     os_timeout: 200
+    manageiq_validate_certs: false
   vars_files:
     - cloud.yml
 
