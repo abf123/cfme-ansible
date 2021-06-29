@@ -12,11 +12,6 @@
     - cloud.yml
 
   tasks:
-  - debug:
-      var: os_cloud
-  - name: Authenticate to the cloud
-    os_auth:
-      cloud: "{{ os_cloud }}"
   - name: Deploy server
     os_server:
       name: "{{ instance_name }}"
