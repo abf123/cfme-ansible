@@ -45,10 +45,14 @@
     register: vm_object
   - debug:
       var: vm_object
-  - name: Refresh the Provider
-    manageiq_provider:
-      name: DIBBS-OpenStack
-      state: refresh
+  - name: Retrieve the provider object
+    manageiq_vmdb:
+      href: "providers/1000000000002"
+    register: provider_object
+  - name: Refresh provider
+    manageiq_vmdb:
+      vmdb: "{{ provider_object }}"
+      action: refresh
   - name: Wait for provider to refresh
     wait_for:
       timeout: 20
