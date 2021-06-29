@@ -45,6 +45,13 @@
     register: vm_object
   - debug:
       var: vm_object
+  - name: Refresh the Provider
+    manageiq_provider:
+      name: DIBBS-OpenStack
+      state: refresh
+  - name: Wait for provider to refresh
+    wait_for:
+      timeout: 20
   - name: Add the VM to the service
     manageiq_vmdb:
       vmdb: "{{ service_object }}"
