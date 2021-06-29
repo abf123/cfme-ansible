@@ -55,7 +55,7 @@
       action: refresh
   - name: Wait for provider to refresh
     wait_for:
-      timeout: 20
+      timeout: 300
   - name: Add the VM to the service
     manageiq_vmdb:
       vmdb: "{{ service_object }}"
