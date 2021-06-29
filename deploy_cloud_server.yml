@@ -11,7 +11,17 @@
   vars_files:
     - cloud.yml
 
+  roles:
+  - manageiq.manageiq_vmdb
+
   tasks:
+  - name: Get a vmdb object
+    manageiq_vmdb:
+      href: "{{ manageiq.service }}"
+    register: service_object
+  - name: Print the service details
+    debug:
+      msg: "Services object is {{ service_object }}"
   - name: Deploy server
     os_server:
       name: "{{ instance_name }}"
@@ -23,3 +33,15 @@
       flavor: "{{ instance_flavor }}"
       nics:
         - net-name: "{{ instance_network }}"
+    register: vm_object
+  - debug:
+      var: vm_object
+  - set_fact:
+      vm_href: "{{ vm.json.resources[0].href }}"
+  - name: Add the VM to the service
+    manageiq_vmdb:
+      vmdb: "{{ service_object }}"
+      action: add_resource
+      data:
+        resource:
+          href: "{{ vm_href }}"
