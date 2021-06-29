@@ -1,2 +1,3 @@
 ---
+- src: manageiq.manageiq_automate
 - src: manageiq.manageiq_vmdb
