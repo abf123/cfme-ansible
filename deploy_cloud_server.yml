@@ -1,6 +1,7 @@
 ---
 - name: Deploy an OpenStack Server
   hosts: localhost
+
   vars:
     instance_name: testing_os_server
     instance_image: Oracle Linux 8 EPEL
@@ -9,6 +10,8 @@
     instance_network: icds-tenant-net
     os_timeout: 200
     manageiq_validate_certs: false
+    automate_workspace: 'automate_workspaces/1'
+
   vars_files:
     - cloud.yml
 
