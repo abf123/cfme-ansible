@@ -15,6 +15,9 @@
   - manageiq.manageiq_vmdb
 
   tasks:
+  - name: Display manageiq connection
+    debug:
+      var: manageiq_connection
   - name: Get a vmdb object
     manageiq_vmdb:
       href: "{{ manageiq.service }}"
