@@ -13,6 +13,7 @@
     - cloud.yml
 
   roles:
+  - manageiq.manageiq_automate
   - manageiq.manageiq_vmdb
 
   tasks:
@@ -22,6 +23,9 @@
   - name: Display manageiq information
     debug:
       var: manageiq
+  - name: Display manageiq workspace
+    debug:
+      var: workspace
   - name: Get a vmdb object
     manageiq_vmdb:
       href: "{{ manageiq.service }}"
