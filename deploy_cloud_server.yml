@@ -19,6 +19,9 @@
   - name: Display manageiq connection
     debug:
       var: manageiq_connection
+  - name: Display manageiq information
+    debug:
+      var: manageiq
   - name: Get a vmdb object
     manageiq_vmdb:
       href: "{{ manageiq.service }}"
@@ -45,7 +48,7 @@
   - name: Add the VM to the service
     manageiq_vmdb:
       vmdb: "{{ service_object }}"
-      action: add_resource
+      action: add_provider_vms
       data:
         resource:
           href: "{{ vm_href }}"
