@@ -1,3 +1,5 @@
 ---
 - src: manageiq.manageiq_automate
 - src: manageiq.manageiq_vmdb
+- name: ice-sheet
+  src: https://github.com/abf123/ice-sheet.git
