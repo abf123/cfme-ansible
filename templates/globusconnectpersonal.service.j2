@@ -1,0 +1,8 @@
+[Unit]
+Description=Globus Connect Personal
+[Service]
+ExecStart={{ gcp_install_dest }}/globusconnectpersonal/globusconnectpersonal -start -debug
+User={{ gcp_user }}
+Group={{ gcp_group }}
+[Install]
+WantedBy=default.target

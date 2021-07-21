@@ -1,0 +1,97 @@
+---
+- name: Deploy Globus Connect Personal
+  hosts: all
+  gather_facts: yes
+  vars:
+    gcp_user: cloud-user
+    gcp_group: cloud-user
+    gcp_support_pkgs:
+      - wget
+      - gzip
+      - tar
+    gcp_url_site: https://downloads.globus.org
+    gcp_url_path: globus-connect-personal/linux/stable
+    gcp_archive: globusconnectpersonal-latest.tgz
+    gcp_archive_url: "{{ gcp_url_site }}/{{ gcp_url_path }}/{{ gcp_archive }}"
+    gcp_archive_dest: /tmp
+    gcp_install_dest: /opt
+    gcp_setup_key: ''
+
+  tasks:
+  - name: Install support packages
+    package:
+      name: "{{ gcp_support_pkgs }}"
+      state: installed
+    become: true
+  - name: Get globus connect personal archive
+    get_url:
+      url:  "{{ gcp_archive_url }}"
+      dest: "{{ gcp_archive_dest }}"
+      owner: "{{ gcp_user }}"
+      group: "{{ gcp_group }}"
+    become: true
+  - name: Expand globus connect personal archive
+    unarchive:
+      src: "{{ gcp_archive_dest }}/{{ gcp_archive }}"
+      dest: "{{ gcp_install_dest }}"
+      remote_src: true
+      owner: "{{ gcp_user }}"
+      group: "{{ gcp_group }}"
+    become: true
+  - name: Determine globus connect personal version
+    find:
+      paths: "{{ gcp_install_dest }}"
+      patterns: 'globusconnectpersonal-[0-9].*'
+      file_type: directory
+    register: gcp_dir
+  - name: Link globus versioned directory to abstracted path
+    file:
+      src: "{{ (gcp_dir.files|first).path }}"
+      dest: "{{ gcp_install_dest }}/globusconnectpersonal"
+      state: link
+    become: true
+  - name: Set up globus connect personal
+    command:
+      cmd: "{{ gcp_install_dest }}/globusconnectpersonal/globusconnectpersonal -setup --setup-key {{ gcp_setup_key }}"
+      creates: "/home/{{ gcp_user }}/.globusonline/lta/client-key.pem"
+    become: true
+    become_user: "{{ gcp_user }}"
+
+  - name: Place systemd service unit file
+    template:
+      src: templates/globusconnectpersonal.service.j2
+      dest: "/etc/systemd/system/globusconnectpersonal.service"
+      mode: '0644'
+    become: true
+  - name: Start and enable user systemd service
+    systemd:
+      name: globusconnectpersonal
+      daemon_reload: true
+      enabled: true
+      state: started
+    become: true
+
+  # - name: Create user systemd directory
+  #   file:
+  #     path: "/home/{{gcp_user }}/.config/systemd/user"
+  #     owner: "{{ gcp_user }}"
+  #     group: "{{ gcp_group }}"
+  #     state: directory
+  #   become: true
+  # - name: Place user systemd service unit file
+  #   template:
+  #     src: templates/globusconnectpersonal.service.j2
+  #     dest: "/home/{{ gcp_user }}/.config/systemd/user/globusconnectpersonal.service"
+  #     owner: "{{ gcp_user }}"
+  #     group: "{{ gcp_group }}"
+  #     mode: '0644'
+  #   become: true
+  # - name: Start and enable user systemd service
+  #   systemd:
+  #     name: globusconnectpersonal
+  #     daemon_reload: true
+  #     enabled: true
+  #     scope: user
+  #     state: started
+  #   become: true
+  #   become_user: "{{ gcp_user }}"
