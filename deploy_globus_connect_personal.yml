@@ -15,7 +15,7 @@
     gcp_archive_url: "{{ gcp_url_site }}/{{ gcp_url_path }}/{{ gcp_archive }}"
     gcp_archive_dest: /tmp
     gcp_install_dest: /opt
-    gcp_setup_key: ''
+    gcp_endpoint_name: 'test_ansible_endpoint'
 
   tasks:
   - name: Install support packages
@@ -23,6 +23,9 @@
       name: "{{ gcp_support_pkgs }}"
       state: installed
     become: true
+    tags:
+      - install_gcp
+
   - name: Get globus connect personal archive
     get_url:
       url:  "{{ gcp_archive_url }}"
@@ -30,6 +33,9 @@
       owner: "{{ gcp_user }}"
       group: "{{ gcp_group }}"
     become: true
+    tags:
+      - install_gcp
+
   - name: Expand globus connect personal archive
     unarchive:
       src: "{{ gcp_archive_dest }}/{{ gcp_archive }}"
@@ -38,24 +44,66 @@
       owner: "{{ gcp_user }}"
       group: "{{ gcp_group }}"
     become: true
+    tags:
+      - install_gcp
+
   - name: Determine globus connect personal version
     find:
       paths: "{{ gcp_install_dest }}"
       patterns: 'globusconnectpersonal-[0-9].*'
       file_type: directory
     register: gcp_dir
+    tags:
+      - install_gcp
+
   - name: Link globus versioned directory to abstracted path
     file:
       src: "{{ (gcp_dir.files|first).path }}"
       dest: "{{ gcp_install_dest }}/globusconnectpersonal"
       state: link
     become: true
+    tags:
+      - install_gcp
+
+  - name: Set up globus personal endpoint
+    shell: ". .globusvenv/bin/activate && globus endpoint create --personal {{ gcp_endpoint_name }}"
+    register: endpoint
+    become: true
+    become_user: "{{ gcp_user }}"
+    tags:
+      - get_gcp_key
+      - setup_gcp
+
+  - name: Isolate gcp setup key
+    set_fact:
+      gcp_setup_key: "{{ (endpoint.stdout_lines|map('regex_replace','\ ','')|select('match','Setup')|list|first).split(':')[-1] }}"
+    tags:
+      - get_gcp_key
+      - setup_gcp
+      - debug_key
+    # vars:
+    #   endpoint:
+    #     stdout_lines:
+    #       - 'Message:     Endpoint created successfully'
+    #       - 'Endpoint ID: f528ecd4-ee26-11eb-b467-eb47ba14b5cc'
+    #       - 'Setup Key:   3bea327f-c523-4715-8e29-63660f10fcba'
+
+  - name: Display isolated gcp setup key
+    debug:
+      var: gcp_setup_key
+    tags:
+      - get_gcp_key
+      - setup_gcp
+      - debug_key
+
   - name: Set up globus connect personal
     command:
       cmd: "{{ gcp_install_dest }}/globusconnectpersonal/globusconnectpersonal -setup --setup-key {{ gcp_setup_key }}"
       creates: "/home/{{ gcp_user }}/.globusonline/lta/client-key.pem"
     become: true
     become_user: "{{ gcp_user }}"
+    tags:
+      - setup_gcp
 
   - name: Place systemd service unit file
     template:
@@ -63,6 +111,10 @@
       dest: "/etc/systemd/system/globusconnectpersonal.service"
       mode: '0644'
     become: true
+    tags:
+      - setup_gcp
+      - gcp_service
+
   - name: Start and enable user systemd service
     systemd:
       name: globusconnectpersonal
@@ -70,6 +122,9 @@
       enabled: true
       state: started
     become: true
+    tags:
+      - setup_gcp
+      - gcp_service
 
   # - name: Create user systemd directory
   #   file:
@@ -78,6 +133,7 @@
   #     group: "{{ gcp_group }}"
   #     state: directory
   #   become: true
+  #
   # - name: Place user systemd service unit file
   #   template:
   #     src: templates/globusconnectpersonal.service.j2
@@ -86,6 +142,7 @@
   #     group: "{{ gcp_group }}"
   #     mode: '0644'
   #   become: true
+  #
   # - name: Start and enable user systemd service
   #   systemd:
   #     name: globusconnectpersonal
