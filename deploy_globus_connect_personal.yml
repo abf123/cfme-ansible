@@ -16,6 +16,8 @@
     gcp_archive_dest: /tmp
     gcp_install_dest: /opt
     gcp_endpoint_name: 'test_ansible_endpoint'
+    gcli_venv_name: 'globusvenv'
+    home_path: /home
 
   tasks:
   - name: Install support packages
@@ -66,7 +68,7 @@
       - install_gcp
 
   - name: Set up globus personal endpoint
-    shell: ". .globusvenv/bin/activate && globus endpoint create --personal {{ gcp_endpoint_name }}"
+    shell: ". {{ home_path }}/{{ gcp_user }}/.{{ gcli_venv_name }}/bin/activate && globus endpoint create --force-encryption --personal {{ gcp_endpoint_name }}"
     register: endpoint
     become: true
     become_user: "{{ gcp_user }}"
@@ -85,7 +87,7 @@
   - name: Set up globus connect personal
     command:
       cmd: "{{ gcp_install_dest }}/globusconnectpersonal/globusconnectpersonal -setup --setup-key {{ gcp_setup_key }}"
-      creates: "/home/{{ gcp_user }}/.globusonline/lta/client-key.pem"
+      creates: "{{ home_path }}/{{ gcp_user }}/.globusonline/lta/client-key.pem"
     become: true
     become_user: "{{ gcp_user }}"
     tags:

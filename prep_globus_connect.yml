@@ -16,6 +16,8 @@
       - python39-setuptools
     gcli_pip_pkgs:
       - globus-cli
+    gcli_venv_name: 'globusvenv'
+    home_path: /home
 
   tasks:
   - name: Install globus support packages
@@ -23,6 +25,7 @@
       name: "{{ gcli_support_pkgs }}"
       state: installed
     become: true
+
   - name: Install updated virtualenv
     pip:
       name: virtualenv
@@ -30,12 +33,22 @@
       executable: pip-3.9
     become: true
     become_user: "{{ gcp_user }}"
+
   - name: Install globus cli
     pip:
       name: "{{ gcli_pip_pkgs }}"
       state: present
-      virtualenv: "/home/{{ gcp_user }}/.globusvenv"
+      virtualenv: "{{ home_path }}/{{ gcp_user }}/.{{ gcli_venv_name }}"
       virtualenv_command: virtualenv
       virtualenv_python: python3.9
     become: true
     become_user: "{{ gcp_user }}"
+
+  - name: Place globus login script
+    template:
+      src: templates/globuslogin.sh.j2
+      dest: "{{ home_path }}/{{ gcp_user }}/globuslogin.sh"
+      owner: "{{ gcp_user }}"
+      group: "{{ gcp_group }}"
+      mode: '0750'
+    become: true
