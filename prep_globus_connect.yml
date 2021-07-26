@@ -8,8 +8,12 @@
     gcli_support_pkgs:
       - python3
       - python3-pip
-      - python3-virtualenv
       - python3-devel
+      - python3-setuptools
+      - python39
+      - python39-pip
+      - python39-devel
+      - python39-setuptools
     gcli_pip_pkgs:
       - globus-cli
 
@@ -19,11 +23,19 @@
       name: "{{ gcli_support_pkgs }}"
       state: installed
     become: true
+  - name: Install updated virtualenv
+    pip:
+      name: virtualenv
+      state: present
+      executable: pip-3.9
+    become: true
+    become_user: "{{ gcp_user }}"
   - name: Install globus cli
     pip:
       name: "{{ gcli_pip_pkgs }}"
       state: present
       virtualenv: "/home/{{ gcp_user }}/.globusvenv"
-      virtualenv_command: virtualenv-3
+      virtualenv_command: virtualenv
+      virtualenv_python: python3.9
     become: true
     become_user: "{{ gcp_user }}"
