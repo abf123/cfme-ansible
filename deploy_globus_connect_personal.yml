@@ -5,10 +5,6 @@
   vars:
     gcp_user: cloud-user
     gcp_group: cloud-user
-    gcp_support_pkgs:
-      - wget
-      - gzip
-      - tar
     gcp_url_site: https://downloads.globus.org
     gcp_url_path: globus-connect-personal/linux/stable
     gcp_archive: globusconnectpersonal-latest.tgz
@@ -20,6 +16,12 @@
     home_path: /home
 
   tasks:
+  - name: Include OS-specific variables
+    include_vars: "vars/{{ ansible_os_family }}.yml"
+
+  - name: Include OS-version-specific variables
+    include_vars: "vars/{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
+
   - name: Install support packages
     package:
       name: "{{ gcp_support_pkgs }}"

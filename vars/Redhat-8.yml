@@ -1,0 +1,14 @@
+---
+gcli_support_pkgs:
+  - python3
+  - python3-pip
+  - python3-devel
+  - python3-setuptools
+  - python39
+  - python39-pip
+  - python39-devel
+  - python39-setuptools
+gcp_support_pkgs:
+  - wget
+  - gzip
+  - tar
