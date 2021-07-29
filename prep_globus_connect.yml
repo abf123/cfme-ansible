@@ -20,7 +20,7 @@
   - name: Install globus support packages
     package:
       name: "{{ gcli_support_pkgs }}"
-      state: installed
+      state: present
     become: true
 
   - name: Install updated virtualenv

@@ -25,7 +25,7 @@
   - name: Install support packages
     package:
       name: "{{ gcp_support_pkgs }}"
-      state: installed
+      state: present
     become: true
     tags:
       - install_gcp
