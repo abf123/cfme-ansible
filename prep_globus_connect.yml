@@ -34,7 +34,7 @@
       name: "{{ gcli_pip_pkgs }}"
       state: present
       virtualenv: "{{ home_path }}/{{ gcp_user }}/.{{ gcli_venv_name }}"
-      virtualenv_command: virtualenv
+      virtualenv_command: "{{ home_path }}/{{ gcp_user }}/.local/bin/virtualenv"
       virtualenv_python: "{{ gcli_python_exec }}"
     become: true
     become_user: "{{ gcp_user }}"
