@@ -13,7 +13,7 @@
       comment: "{{ user_comment|default(omit) }}"
       append: "{{ user_append|default(omit) }}"
       groups: "{{ user_groups|default(omit) }}"
-      shell: "{{ user_shell|default('bin/bash') }}"
+      shell: "{{ user_shell|default('/bin/bash') }}"
     become: true
   - name: Add pubkey to user
     authorized_key:
