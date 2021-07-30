@@ -1,14 +1,18 @@
 ---
+gcp_user: cloud-user
+gcp_group: cloud-user
 gcli_support_pkgs:
   - python3
   - python3-pip
   - python3-devel
   - python3-setuptools
-  - python39
-  - python39-pip
-  - python39-devel
-  - python39-setuptools
+  #- python39
+  #- python39-pip
+  #- python39-devel
+  #- python39-setuptools
 gcp_support_pkgs:
   - wget
   - gzip
   - tar
+gcli_pip_exec: pip3
+gcli_python_exec: python3

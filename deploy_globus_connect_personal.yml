@@ -3,8 +3,6 @@
   hosts: all
   gather_facts: yes
   vars:
-    gcp_user: cloud-user
-    gcp_group: cloud-user
     gcp_url_site: https://downloads.globus.org
     gcp_url_path: globus-connect-personal/linux/stable
     gcp_archive: globusconnectpersonal-latest.tgz
