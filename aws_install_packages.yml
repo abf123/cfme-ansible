@@ -1,0 +1,21 @@
+---
+- name: Install packages on an AWS VM
+  hosts: all
+  tasks:
+    - name: Display all Environment Variables
+      debug:
+        var: environment
+    - name: Display all group names
+      debug:
+        var: group_names
+    - name: Display all groups
+      debug:
+        var: groups
+    - name: Display all variables/facts known for a host
+      debug:
+        var: hostvars[inventory_hostname]
+  #- name: Install packages
+  #  package:
+  #    name: "{{ packages.split('\n') }}"
+  #    state: present
+  #  become: true
