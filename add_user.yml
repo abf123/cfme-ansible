@@ -1,15 +1,23 @@
 ---
 - name: Add Users to a VM
+  gather_facts: false
   hosts: all
 
-  roles:
-  - role: whoami
+  #roles:
+  #- role: whoami
+
+  vars:
+    user_pwd_hash: "{{ user_password|default('', true)|password_hash('sha512',65534|random(seed=inventory_hostname)) }}"
 
   tasks:
+  # - name: Display password variable info
+  #   debug:
+  #     msg: "{{ (user_password is defined) | ternary(user_pwd_hash, omit) }}"
   - name: Add user
     user:
       name: "{{ user_name }}"
       state: present
+      password: "{{ (user_password is defined)|ternary(user_pwd_hash,omit) }}"
       comment: "{{ user_comment|default(omit) }}"
       append: "{{ user_append|default(omit) }}"
       groups: "{{ user_groups|default(omit) }}"
