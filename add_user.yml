@@ -1,6 +1,5 @@
 ---
 - name: Add Users to a VM
-  gather_facts: false
   hosts: all
 
   #roles:
